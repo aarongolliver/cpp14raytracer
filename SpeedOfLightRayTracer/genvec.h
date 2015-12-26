@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iostream>
 #include <cassert>
+#include <functional>
 
 
 namespace genvec {
@@ -44,6 +45,14 @@ namespace genvec {
 			static_assert(LEN >= sizeof...(Ts), "Cannot assign to more elements than exist in the vector!");
 			static_assert(sizeof...(Ts) == 0 || sizeof...(Ts) == LEN, "Must assign to all or no elements of a vector");
 		}
+
+        template<>
+        vec(std::function<T()> f)
+        {
+            for (int i = 0; i < LEN; i++) {
+                arr[i] = f();
+            }
+        }
 
 		inline auto& operator[](const size_t idx) {
 			return arr[idx];
@@ -232,7 +241,7 @@ namespace genvec {
 		vec<T, LEN> abs() const {
 			vec<T, LEN> ret;
 			for (auto i = 0; i < LEN; i++) {
-				ret[i] = std::abs((*this)[i]);
+				ret[i] = std::abs(arr[i]);
 			}
 			return ret;
 		}
@@ -241,28 +250,28 @@ namespace genvec {
 			stringstream s;
 			s << '(';
 			for (auto i = 0; i < LEN - 1; i++) {
-				s << (*this)[i] << ',' << ' ';
+				s << arr[i] << ',' << ' ';
 			}
-			s << (*this)[LEN - 1] << ')';
+			s << arr[LEN - 1] << ')';
 			return s.str();
 		}
 
         auto all_unit() const {
             vec<T, LEN> ret;
-            auto max = (*this)[0];
+            auto max = arr[0];
             for (auto i = 0; i < LEN; i++) {
-                max = std::max(max, (*this)[i]);
+                max = std::max(max, arr[i]);
             }
             for (auto i = 0; i < LEN; i++) {
-                ret = (*this)[i] / max;
+                ret = arr[i] / max;
             }
             return ret;
         }
 
         auto sum() const {
-            auto sum = (*this)[0];
+            auto sum = arr[0];
             for (auto i = 1; i < LEN; i++) {
-                sum += (*this)[i];
+                sum += arr[i];
             }
             return sum;
         }

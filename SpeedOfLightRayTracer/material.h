@@ -17,10 +17,10 @@ public:
 };
 
 namespace materials {
-    const auto red =   material{ 1, { .1,0,0 },{ 1,0,0 },{ .1,.1,.1 }, 20, 0.5f };
-    const auto green = material{ 1, { .1,0,0 },{ 0,1,0 },{ .1,.1,.1 }, 20, 0.5f };
-    const auto blue =  material{ 1, {  0,0,0 },{ 0,0,1 },{ .1,.1,.1 }, 20, 0.5f };
+    const auto red =   material{ 1, { .1,0,0 },{ 1,0,0 },{ .1,.1,.1 }, 20, 0.7f };
+    const auto green = material{ 1, { .1,0,0 },{ 0,1,0 },{ .1,.1,.1 }, 20, 0.7f };
+    const auto blue =  material{ 1, {  0,0,0 },{ 0,0,1 },{ .1,.1,.1 }, 20, 0.7f };
     
-    const auto white = material{ 1, { .1f,.1f,.1f },{ 1,1,1 },{ .1,.1,.1 }, 20, .1f };
+    const auto white = material{ 1, { .1f,.1f,.1f },{ 1,1,1 },{ .1,.1,.1 }, 20, 0 };
 }
 
