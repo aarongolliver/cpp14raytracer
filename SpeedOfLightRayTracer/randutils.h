@@ -8,7 +8,7 @@ namespace randutils {
 }
 
 template<typename T = float>
-auto random_point_on_sphere(std::mt19937_64 mt) {
+auto random_point_on_sphere(std::mt19937_64& mt) {
     using namespace randutils;
     using genvec::vec;
     using std::uniform_real_distribution;

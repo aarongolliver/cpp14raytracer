@@ -65,8 +65,8 @@ auto get_closest_intersection(const scene& scene, const ray& r) {
     return make_pair(closest_object, closest_intersection);
 }
 
-template<int reflections_left>
-rgb intersect_scene(const scene& scene, const ray& r, std::mt19937_64& mt, const int reflection_bounces = 1, const int shadow_bounces = 100, const float reflection_spread = 100, const float shadow_spread = 20) {
+template<int reflections_left, int reflection_bounces = 1, int shadow_bounces = 100>
+rgb intersect_scene(const scene& scene, const ray& r, std::mt19937_64& mt, const float reflection_spread = 100, const float shadow_spread = 20) {
     if (reflections_left < 0) return r.dir.abs();
     object const* closest_object;
     intersection closest_intersection;
@@ -115,7 +115,8 @@ rgb intersect_scene(const scene& scene, const ray& r, std::mt19937_64& mt, const
 
                 auto reflect_dir = ((r.dir - 2 * dot(r.dir, norm)*norm).normalized() * reflection_spread + wiggle).normalized();
                 auto reflect_ray = ray{ pos_of_intersect + (norm * .001f), reflect_dir };
-                auto reflect_color = intersect_scene<reflections_left - 1>(scene, reflect_ray, mt, 1, std::max(shadow_bounces / 2, 1));
+                const auto new_shadow_bounces = std::max(shadow_bounces / 2, 1);
+                auto reflect_color = intersect_scene<reflections_left - 1, 1, (reflections_left > 1 ? new_shadow_bounces : 1)>(scene, reflect_ray, mt);
                 color += (reflect_color * mat.r) / reflection_bounces;
             }
         }
@@ -127,13 +128,13 @@ rgb intersect_scene(const scene& scene, const ray& r, std::mt19937_64& mt, const
 }
 
 template<>
-rgb intersect_scene<0>(const scene&, const ray&, std::mt19937_64&, const int, const int, const float, const float) {
+rgb intersect_scene<0,1,1>(const scene&, const ray&, std::mt19937_64&, const float, const float) {
     return{ 0,0,0 };
 }
 
 int main()
 {
-    const auto size = ivec2{ 500, 500 };
+    const auto size = ivec2{ 1000, 1000 };
     auto c = camera{ size };
     auto img = vector<rgb>(size[0] * size[1]);
     c.reposition({ -4.999f,0.001f,.001 }, { 0.001f,-0.01,-0.001f }, { 0,1,0 }); // jiggled
@@ -150,7 +151,7 @@ int main()
         for (auto x = 0; x < size[0]; ++x) {
             const auto idx = y*size[0] + x;
             const auto r = c.castRay(x, y);
-            img[idx] = intersect_scene<3>(s, r, mt);
+            img[idx] = intersect_scene<10>(s, r, mt);
         }
     }
 
